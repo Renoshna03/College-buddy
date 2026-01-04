@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>College Buddy</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg-soft: #111827;
+      --card: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --primary: #5b9cf6;
+      --primary-strong: #0a55cd;
+      --accent: #22c55e;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --white: #f6f5f5;       
+    }
+
+    
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(180deg, var(--bg) 0%, #0b132b 100%);
+      color: var(--text);
+    }
+    a { color: var(--primary); text-decoration: none; }
+    img { max-width: 100%; display: block; }
+    .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(180%) blur(8px);
+      background: rgba(15,23,42,0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav {
+      display: grid; grid-template-columns: auto 1fr auto; align-items: center;
+      gap: 16px; padding: 14px 0;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 12px; font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .brand .logo {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 6px 22px rgba(91,156,246,0.35);
+    }
+    .nav-links {
+      display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .nav-links a {
+      padding: 8px 12px; border-radius: 8px; color: var(--text);
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.06); }
+    .nav-actions { display: flex; gap: 10px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04); color: var(--text); font-weight: 600;
+      transition: transform 0.12s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.08); }
+    .btn-primary {
+      border-color: transparent;
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      color: var(--white);
+      box-shadow: 0 8px 20px rgba(59,130,246,0.35);
+    }
+    .btn-primary:hover { filter: brightness(1.05); }
+
+    /* Hero */
+    .hero {
+      padding: 40px 0 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background:
+        radial-gradient(900px 300px at 20% -60%, rgba(91,156,246,0.15), transparent 60%),
+        radial-gradient(900px 300px at 80% -60%, rgba(34,197,94,0.12), transparent 60%);
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 24px;
+    }
+    .hero h1 {
+      margin: 0 0 10px; font-size: 32px; line-height: 1.15; letter-spacing: 0.2px;
+    }
+    .hero p { margin: 0 0 16px; color: var(--muted); }
+    .stats {
+      display: flex; gap: 18px; flex-wrap: wrap; margin-top: 10px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 12px 14px; min-width: 140px;
+    }
+    .stat .kpi { font-weight: 800; font-size: 20px; }
+    .stat .label { color: var(--muted); font-size: 12px; }
+
+    .notice {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 16px;
+    }
+    .notice h3 { margin: 0 0 8px; font-size: 18px; }
+    .notice ul { margin: 0; padding: 0; list-style: none; }
+    .notice li {
+      display: flex; justify-content: space-between; gap: 12px;
+      padding: 8px 0; border-top: 1px dashed rgba(255,255,255,0.08);
+    }
+    .notice li:first-child { border-top: none; }
+    .badge {
+      padding: 4px 8px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.35);
+    }
+
+    /* Sections */
+    section { padding: 28px 0; }
+    .section-title {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-title h2 {
+      margin: 0; font-size: 22px; letter-spacing: 0.3px;
+    }
+    .section-title .hint { color: var(--muted); font-size: 13px; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 16px;
+    }
+
+    /* Events */
+    .events-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    }
+    .event {
+      display: grid; gap: 8px;
+    }
+    .event h3 { margin: 0; font-size: 16px; }
+    .event .meta { color: var(--muted); font-size: 12px; display: flex; gap: 8px; }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag {
+      font-size: 12px; color: #c7d2fe; border: 1px solid rgba(99,102,241,0.45);
+      padding: 3px 8px; border-radius: 999px; background: rgba(99,102,241,0.12);
+    }
+
+    /* Books */
+    .table-wrap { overflow: auto; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      text-align: left; font-size: 13px; color: var(--muted);
+      background: rgba(255,255,255,0.04); padding: 10px 12px; white-space: nowrap;
+    }
+    tbody td { padding: 10px 12px; border-top: 1px dashed rgba(255,255,255,0.08); }
+    .avail { color: #86efac; }
+    .unavail { color: #fca5a5; }
+
+    /* Timetable */
+    .timetable-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+    }
+    .day { background: var(--card); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 12px; }
+    .day h4 { margin: 0 0 8px; font-size: 15px; }
+    .slot {
+      display: flex; justify-content: space-between; gap: 8px;
+      padding: 8px 10px; border: 1px dashed rgba(255,255,255,0.08);
+      border-radius: 10px; margin-bottom: 8px;
+    }
+    .slot:last-child { margin-bottom: 0; }
+    .slot .time { font-size: 12px; color: var(--muted); }
+    .slot .course { font-weight: 600; }
+
+    /* Complaint */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-grid .full { grid-column: 1 / -1; }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; background: #0b1220; color: var(--text);
+      border: 1px solid rgba(255,255,255,0.12); border-radius: 10px;
+      padding: 10px 12px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+    }
+    textarea { min-height: 120px; resize: vertical; }
+
+    /* Footer */
+    footer {
+      padding: 22px 0; margin-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+    }
+
+    /* Chatbot */
+    .chatbot-toggle {
+      position: fixed; right: 20px; bottom: 20px; z-index: 60;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 14px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-strong));
+      color: var(--white); font-weight: 700; border: none; cursor: pointer;
+      box-shadow: 0 10px 24px rgba(59,130,246,0.35);
+    }
+    .chatbot {
+      position: fixed; right: 20px; bottom: 76px; z-index: 60; width: 340px;
+      background: var(--card); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 16px; overflow: hidden; display: none;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.35);
+    }
+    .chat-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      padding: 12px; background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .chat-title { font-weight: 700; }
+    .chat-body {
+      height: 300px; overflow: auto; padding: 12px; display: grid; gap: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent);
+    }
+    .msg {
+      display: inline-block; max-width: 82%; padding: 10px 12px; border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.08); background: #0b1220;
+    }
+    .msg.user { margin-left: auto; background: rgba(59,130,246,0.15); border-color: rgba(59,130,246,0.35); }
+    .msg.bot { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.35); }
+    .chat-input {
+      display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 12px; background: rgba(255,255,255,0.04);
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .chat-input input {
+      background: #0b1220; border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 10px 12px;
+    }
+    .send-btn {
+      background: var(--accent); color: var(--white); border: none; border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 990px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .events-grid { grid-template-columns: 1fr 1fr; }
+      .timetable-grid { grid-template-columns: 1fr 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .nav { grid-template-columns: 1fr auto; }
+      .nav-links { display: none; }
+      .events-grid { grid-template-columns: 1fr; }
+      .timetable-grid { grid-template-columns: 1fr; }
+      .chatbot { width: 92vw; right: 4vw; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>College Hub</div>
+      </div>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="#events">Events</a>
+        <a href="#books">Library</a>
+        <a href="#timetable">Timetable</a>
+        <a href="#complaints">Complaints</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn" onclick="alert('Login coming soon')">Login</button>
+        <button class="btn btn-primary" onclick="alert('Signup coming soon')">Sign up</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <h1>All-in-one portal for students, faculty, and campus life</h1>
+        <p>Find upcoming events, check book availability, view your timetable, and raise complaints — all in one place.</p>
+        <div class="stats">
+          <div class="stat"><div class="kpi">12</div><div class="label">Events this month</div></div>
+          <div class="stat"><div class="kpi">4,320</div><div class="label">Books cataloged</div></div>
+          <div class="stat"><div class="kpi">98%</div><div class="label">Portal uptime</div></div>
+        </div>
+      </div>
+      <div class="notice card">
+        <h3>Campus updates</h3>
+        <ul>
+          <li><span>Winter Fest registrations open</span><span class="badge">New</span></li>
+          <li><span>Library hours extended till 8 PM</span><span class="badge">Update</span></li>
+          <li><span>Exam timetable published</span><span class="badge">Important</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- Events -->
+    <section id="events">
+      <div class="section-title">
+        <h2>Upcoming events</h2>
+        <div class="hint">Stay connected with workshops, fests, and talks</div>
+      </div>
+      <div class="events-grid">
+        <div class="event card">
+          <h3>AI & Data Science Workshop</h3>
+          <div class="meta"><span>Jan 10</span><span>Auditorium A</span></div>
+          <p>Hands-on sessions with industry mentors. Seats limited — register early.</p>
+          <div class="tags"><span class="tag">Tech</span><span class="tag">Hands-on</span></div>
+          <button class="btn btn-primary" onclick="notify('Registered for AI Workshop')">Register</button>
+        </div>
+        <div class="event card">
+          <h3>Entrepreneurship Bootcamp</h3>
+          <div class="meta"><span>Jan 17</span><span>Innovation Lab</span></div>
+          <p>From idea to pitch: learn the essentials of launching a startup.</p>
+          <div class="tags"><span class="tag">Business</span><span class="tag">Pitch</span></div>
+          <button class="btn btn-primary" onclick="notify('Registered for Entrepreneurship Bootcamp')">Register</button>
+        </div>
+        <div class="event card">
+          <h3>Annual Winter Fest</h3>
+          <div class="meta"><span>Jan 25–26</span><span>Main Grounds</span></div>
+          <p>Music, games, food stalls, and cultural performances across two days.</p>
+          <div class="tags"><span class="tag">Culture</span><span class="tag">Fun</span></div>
+          <button class="btn btn-primary" onclick="notify('Registered for Winter Fest')">Register</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Books -->
+    <section id="books">
+      <div class="section-title">
+        <h2>Library books availability</h2>
+        <div class="hint">Search and check if a book is available</div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:grid; grid-template-columns: 1fr auto; gap:12px;">
+          <input id="bookSearch" type="text" placeholder="Search by title, author, or ISBN…" oninput="filterBooks()" aria-label="Search books"/>
+          <button class="btn" onclick="resetBooks()">Reset</button>
+        </div>
+      </div>
+      <div class="table-wrap card">
+        <table id="booksTable" aria-describedby="books">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Author</th>
+              <th>ISBN</th>
+              <th>Shelf</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Sample data; replace with backend feed -->
+            <tr><td>Clean Code</td><td>Robert C. Martin</td><td>9780132350884</td><td>A1-03</td><td class="avail">Available</td></tr>
+            <tr><td>Operating Systems: Three Easy Pieces</td><td>Remzi & Andrea Arpaci-Dusseau</td><td>9781985086593</td><td>B2-11</td><td class="unavail">Checked out</td></tr>
+            <tr><td>Introduction to Algorithms</td><td>Cormen et al.</td><td>9780262046305</td><td>A4-07</td><td class="avail">Available</td></tr>
+            <tr><td>Design Patterns</td><td>Gamma et al.</td><td>9780201633610</td><td>C1-09</td><td class="avail">Available</td></tr>
+            <tr><td>Database System Concepts</td><td>Silberschatz et al.</td><td>9780078022159</td><td>B1-02</td><td class="unavail">Reserved</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Timetable -->
+    <section id="timetable">
+      <div class="section-title">
+        <h2>Your timetable</h2>
+        <div class="hint">BCA — Semester 4 (sample)</div>
+      </div>
+      <div class="timetable-grid">
+        <div class="day">
+          <h4>Monday</h4>
+          <div class="slot"><span class="course">DBMS Lab</span><span class="time">9:00–11:00</span></div>
+          <div class="slot"><span class="course">Operating Systems</span><span class="time">11:15–12:15</span></div>
+          <div class="slot"><span class="course">Quantitative Aptitude</span><span class="time">2:00–3:00</span></div>
+        </div>
+        <div class="day">
+          <h4>Tuesday</h4>
+          <div class="slot"><span class="course">Computer Networks</span><span class="time">9:00–10:00</span></div>
+          <div class="slot"><span class="course">Java OOP</span><span class="time">10:15–11:15</span></div>
+          <div class="slot"><span class="course">Soft Skills</span><span class="time">2:00–3:00</span></div>
+        </div>
+        <div class="day">
+          <h4>Wednesday</h4>
+          <div class="slot"><span class="course">Python for Data Science</span><span class="time">9:00–10:30</span></div>
+          <div class="slot"><span class="course">Elective: Marketing Analytics</span><span class="time">11:00–12:00</span></div>
+        </div>
+        <div class="day">
+          <h4>Thursday</h4>
+          <div class="slot"><span class="course">Web Technologies</span><span class="time">9:00–10:00</span></div>
+          <div class="slot"><span class="course">CN Lab</span><span class="time">10:15–12:15</span></div>
+        </div>
+        <div class="day">
+          <h4>Friday</h4>
+          <div class="slot"><span class="course">Financial Accounting</span><span class="time">9:00–10:00</span></div>
+          <div class="slot"><span class="course">Placement Training</span><span class="time">11:00–12:30</span></div>
+        </div>
+      </div>
+      <div style="margin-top:12px;" class="card">
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="ttFilter" type="text" placeholder="Filter by course…" oninput="filterTimetable()" aria-label="Filter timetable"/>
+          <button class="btn" onclick="resetTimetable()">Reset</button>
+          <button class="btn btn-primary" onclick="downloadTimetable()">Download as PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Complaints -->
+    <section id="complaints">
+      <div class="section-title">
+        <h2>Student complaint box</h2>
+        <div class="hint">Raise issues or suggestions — we’ll route them to the right department</div>
+      </div>
+      <form id="complaintForm" class="card" onsubmit="submitComplaint(event)" novalidate>
+        <div class="form-grid">
+          <div>
+            <label for="name">Full name</label>
+            <input id="name" name="name" type="text" placeholder="Your name" required />
+          </div>
+          <div>
+            <label for="roll">Roll number</label>
+            <input id="roll" name="roll" type="text" placeholder="e.g., 21BCA001" required />
+          </div>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@college.edu" required />
+          </div>
+          <div>
+            <label for="dept">Department</label>
+            <select id="dept" name="dept" required>
+              <option value="">Select department</option>
+              <option>BCA</option>
+              <option>CS</option>
+              <option>ECE</option>
+              <option>EEE</option>
+              <option>Mechanical</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="">Choose category</option>
+              <option>Academic</option>
+              <option>Exams</option>
+              <option>Library</option>
+              <option>Hostel</option>
+              <option>Facilities</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="message">Complaint / suggestion</label>
+            <textarea id="message" name="message" placeholder="Describe the issue in detail…" required></textarea>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
+          <button class="btn btn-primary" type="submit">Submit complaint</button>
+          <button class="btn" type="button" onclick="clearComplaint()">Clear</button>
+          <span id="complaintStatus" style="color: var(--muted);"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <div>© <span id="year"></span> College Hub. All rights reserved.</div>
+      <div>Need help? Open the chatbot at the bottom right.</div>
+    </div>
+  </footer>
+
+  <!-- Chatbot widget -->
+  <button class="chatbot-toggle" aria-expanded="false" aria-controls="chatbot" onclick="toggleChat()">
+    💬 Chat & Help
+  </button>
+  <div id="chatbot" class="chatbot" role="dialog" aria-label="College assistant chatbot">
+    <div class="chat-head">
+      <div class="chat-title">Assistant</div>
+      <button class="btn" onclick="toggleChat()">Close</button>
+    </div>
+    <div id="chatBody" class="chat-body" aria-live="polite" aria-atomic="false">
+      <div class="msg bot">Hi! I can help with events, books, timetable, or complaints. Ask me anything.</div>
+      <div class="msg bot">Tip: Try “Show events next week” or “Is Clean Code available?”</div>
+    </div>
+    <div class="chat-input">
+      <input id="chatInput" type="text" placeholder="Type your question…" onkeydown="if(event.key==='Enter'){sendMessage();}" aria-label="Chat message"/>
+      <button class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // Utilities
+    const notify = (msg) => {
+      const el = document.createElement('div');
+      el.textContent = msg;
+      el.style.position = 'fixed';
+      el.style.right = '20px';
+      el.style.bottom = '20px';
+      el.style.background = 'rgba(34,197,94,0.15)';
+      el.style.border = '1px solid rgba(34,197,94,0.35)';
+      el.style.color = '#86efac';
+      el.style.padding = '10px 12px';
+      el.style.borderRadius = '12px';
+      el.style.zIndex = '80';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1800);
+    };
+
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Chatbot logic (simple rule-based demo)
+    function toggleChat() {
+      const chat = document.getElementById('chatbot');
+      const toggle = document.querySelector('.chatbot-toggle');
+      const isOpen = chat.style.display === 'block';
+      chat.style.display = isOpen ? 'none' : 'block';
+      toggle.setAttribute('aria-expanded', String(!isOpen));
+      if (!isOpen) setTimeout(() => document.getElementById('chatInput').focus(), 150);
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      appendMessage(text, 'user');
+      setTimeout(() => respond(text), 350);
+    }
+
+    function appendMessage(text, type = 'bot') {
+      const body = document.getElementById('chatBody');
+      const div = document.createElement('div');
+      div.className = 'msg ' + type;
+      div.textContent = text;
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
+    }
+
+    function respond(query) {
+      const q = query.toLowerCase();
+
+      // Events
+      if (q.includes('event')) {
+        appendMessage('Upcoming: AI Workshop (Jan 10), Entrepreneurship Bootcamp (Jan 17), Winter Fest (Jan 25–26).');
+        return;
+      }
+      if (q.includes('register')) {
+        appendMessage('Open an event card and click “Register”. You’ll get a confirmation.');
+        return;
+      }
+
+      // Books
+      if (q.includes('clean code')) {
+        appendMessage('“Clean Code” is currently Available at shelf A1-03.');
+        return;
+      }
+      if (q.includes('book') || q.includes('library') || q.includes('isbn')) {
+        appendMessage('Use the Library section search bar to filter by title, author, or ISBN.');
+        return;
+      }
+
+      // Timetable
+      if (q.includes('timetable') || q.includes('class')) {
+        appendMessage('Check “Your timetable”. You can filter by course or download as PDF.');
+        return;
+      }
+
+      // Complaints
+      if (q.includes('complaint') || q.includes('issue') || q.includes('suggestion')) {
+        appendMessage('Go to “Student complaint box”, fill the form, and submit. You’ll see a status message.');
+        return;
+      }
+
+      // Generic
+      if (q.includes('hi') || q.includes('hello') || q.includes('hey')) {
+        appendMessage('Hello! How can I help you today?');
+        return;
+      }
+
+      appendMessage('I’m not sure about that yet. Try asking about events, books, timetable, or complaints.');
+    }
+
+    // Books search/filter
+    function filterBooks() {
+      const term = document.getElementById('bookSearch').value.trim().toLowerCase();
+      const rows = document.querySelectorAll('#booksTable tbody tr');
+      rows.forEach(r => {
+        const text = r.textContent.toLowerCase();
+        r.style.display = text.includes(term) ? '' : 'none';
+      });
+    }
+    function resetBooks() {
+      document.getElementById('bookSearch').value = '';
+      filterBooks();
+    }
+
+    // Timetable filter & download
+    function filterTimetable() {
+      const term = document.getElementById('ttFilter').value.trim().toLowerCase();
+      const slots = document.querySelectorAll('.slot');
+      slots.forEach(s => {
+        const course = s.querySelector('.course').textContent.toLowerCase();
+        s.style.display = course.includes(term) ? '' : 'none';
+      });
+    }
+    function resetTimetable() {
+      document.getElementById('ttFilter').value = '';
+      filterTimetable();
+    }
+    function downloadTimetable() {
+      // Simple “print to PDF” approach
+      window.print();
+    }
+
+    // Complaint form
+    function submitComplaint(e) {
+      e.preventDefault();
+      const status = document.getElementById('complaintStatus');
+
+      const name = document.getElementById('name').value.trim();
+      const roll = document.getElementById('roll').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const dept = document.getElementById('dept').value.trim();
+      const category = document.getElementById('category').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      // Basic validation
+      if (!name || !roll || !email || !dept || !category || !message) {
+        status.style.color = '#fca5a5';
+        status.textContent = 'Please fill all required fields.';
+        return;
+      }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        status.style.color = '#fca5a5';
+        status.textContent = 'Please provide a valid email address.';
+        return;
+      }
+
+      // Demo: store locally (replace with API call)
+      const payload = { name, roll, email, dept, category, message, createdAt: new Date().toISOString() };
+      const existing = JSON.parse(localStorage.getItem('complaints') || '[]');
+      existing.push(payload);
+      localStorage.setItem('complaints', JSON.stringify(existing));
+
+      status.style.color = '#86efac';
+      status.textContent = 'Submitted successfully. We will review and respond.';
+      notify('Complaint submitted');
+      e.target.reset();
+    }
+    function clearComplaint() {
+      document.getElementById('complaintForm').reset();
+      document.getElementById('complaintStatus').textContent = '';
+    }
+  </script>
+</body>
+</html>
